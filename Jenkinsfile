@@ -10,7 +10,7 @@ pipeline {
         agent {
             node {
                 label "Build-server"
-                customWorkspace "/home/seta/jenkins/"
+                customWorkspace "/home/ubuntu/jenkins_data/"
                 }
             }
         environment {
@@ -20,15 +20,15 @@ pipeline {
             sh "docker build . -t devops-training-nodejs-$ENV:latest --build-arg BUILD_ENV=$ENV -f Dockerfile"
 
 
-            sh "cat docker.txt | docker login -u 29trxngxx --password-stdin"
+            sh "cat docker.txt | docker login -u babacaca1103 --password-stdin"
             // tag docker image
-            sh "docker tag devops-training-nodejs-$ENV:latest 29trxngxx/devops-training:$TAG"
+            sh "docker tag devops-training-nodejs-$ENV:latest babacaca1103/devops-repo:$TAG"
 
             //push docker image to docker hub
-            sh "docker push 29trxngxx/devops-training:$TAG"
+            sh "docker push babacaca1103/devops-repo:$TAG"
 
 	    // remove docker image to reduce space on build server	
-            sh "docker rmi -f 29trxngxx/devops-training:$TAG"
+            sh "docker rmi -f babacaca1103/devops-repo:$TAG"
 
            }
          
@@ -37,14 +37,14 @@ pipeline {
 	    agent {
         node {
             label "Target-Server"
-                customWorkspace "/home/ubuntu/jenkins-$ENV/"
+                customWorkspace "/home/ubuntu/target_data-$ENV/"
             }
         }
         environment {
             TAG = sh(returnStdout: true, script: "git rev-parse -short=10 HEAD | tail -n +2").trim()
         }
 	steps {
-            sh "sed -i 's/{tag}/$TAG/g' /home/ubuntu/jenkins-$ENV/docker-compose.yaml"
+            sh "sed -i 's/{tag}/$TAG/g' /home/ubuntu/target_data-$ENV/docker-compose.yaml"
             sh "docker-compose up -d"
         }      
        }
