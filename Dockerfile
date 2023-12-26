@@ -10,4 +10,4 @@ COPY .env.${BUILD_ENV:-dev} ./.env
 
 EXPOSE 3000
 
-CMD [ "npm", "start" ]
+# CMD [ "npm", "start" ]
